@@ -5,21 +5,20 @@ import './db.js'
 
 async function AdminAccount(){
     try{
-        const adminCount = await Admin.countDocuments()
-        if(adminCount===0){
-            const hashPassword = await bcrypt.hash('adminpassword',10)
+        const adminCount = await Admin.countDocuments();
+        if(adminCount === 0){
+            const hashPassword = await bcrypt.hash('adminpassword', 10);
             const newAdmin = new Admin({
-                username:'admin',
-                password:hashPassword
-            })
-            await newAdmin.save()
-            console.log("account created")
+                username: 'admin',
+                password: hashPassword
+            });
+            await newAdmin.save();
+            console.log("Admin account created successfully");
         }else{
-            console.log("account already existed")
+            console.log("Admin account already exists");
         }
     }catch(err){
-        console.log("error")
-
+        console.error("Error creating admin account:", err);
     }
 }
-AdminAccount()
+AdminAccount();
