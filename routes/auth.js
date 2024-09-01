@@ -5,6 +5,9 @@ import bcrypt from 'bcrypt';
 
 const router = express.Router();
 
+// Hard-coded secret key (only for development/testing)
+const SECRET_KEY = 'your-very-strong-secret-key';
+
 router.post('/login', async (req, res) => {
     const { username, password, role } = req.body;
 
@@ -17,26 +20,17 @@ router.post('/login', async (req, res) => {
         if (!validPassword) {
             return res.status(401).json({ message: "Wrong password" });
         }
-        const token = jwt.sign({ username: admin.username, role: 'admin' }, process.env.Admin_Key, { expiresIn: '1h' });
+        // Use hard-coded secret key for signing the token
+        const token = jwt.sign({ username: admin.username, role: 'admin' }, SECRET_KEY, { expiresIn: '1h' });
         res.json({ login: true, role: 'admin', token });
     } else {
         // Handle other roles
     }
 });
 
-router.get('/total', async (req, res) => {
-    try {
-        const totalAdmins = await Admin.countDocuments({});
-        res.json({ totalAdmins });
-    } catch (error) {
-        console.error('Error fetching admin count:', error);
-        res.status(500).json({ message: 'Server error while fetching admin count' });
-    }
-});
-
 const verifyAdmin = (req, res, next) => {
     const authHeader = req.headers['authorization'];
-    
+
     if (!authHeader) {
         return res.status(401).json({ message: "Unauthorized: No token provided" });
     }
@@ -47,7 +41,8 @@ const verifyAdmin = (req, res, next) => {
         return res.status(401).json({ message: "Unauthorized: No token provided" });
     }
 
-    jwt.verify(token, process.env.Admin_Key, (err, decoded) => {
+    // Use hard-coded secret key for verifying the token
+    jwt.verify(token, SECRET_KEY, (err, decoded) => {
         if (err) {
             return res.status(403).json({ message: "Forbidden: Invalid token" });
         }
