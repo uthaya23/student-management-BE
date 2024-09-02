@@ -25,5 +25,5 @@ const studentSchema = new mongoose.Schema(
             required:true,},
          }
 )
-const studentModel=mongoose.model('Student',studentSchema)
+const studentModel=mongoose.model('Employee',studentSchema)
 export {studentModel as Student}
